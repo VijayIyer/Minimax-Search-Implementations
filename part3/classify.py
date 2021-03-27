@@ -114,20 +114,23 @@ def map_generator(train_data):
     print(east_coast)
     print(west_coast)
                 
-    def  probability(test_data):
-      for i in range(len(test_data['objects'])):
-          test_data['objects'][i]=test_data['objects'][i].split()
-          ec=1
-          wc=1
-          for elem in test_data['objects'][i]:
-              if(elem in east_coast):
-                  ec*=math.exp((east_coast[elem]/sum(east_coast.values())))
-              if(elem in west_coast):
-                  wc*=math.exp((west_coast[elem]/sum(west_coast.values())))
-    if(ec>wc):
-             labels.append("EastCoast")
-    else:
-            labels.append("WestCoast")
+def probability(test_data):
+    for i in range(len(test_data['objects'])):
+        test_data['objects'][i] = test_data['objects'][i].split()
+        ec = 1
+        wc = 1
+        for elem in test_data['objects'][i]:
+            if elem in east_coast:
+                ec *= math.exp(east_coast[elem]/sum(east_coast.values()))
+            if elem in west_coast:
+                wc *= math.exp(west_coast[elem]/sum(west_coast.values()))
+        # ECWC_count = Counter(train_data["labels"])
+        # ec *= ECWC_count["EastCoast"]/sum(ECWC_count.values())
+        # wc *= ECWC_count["WestCoast"]/sum(ECWC_count.values())
+        if(ec>wc):
+              test_Labels.append("EastCoast")
+        else:
+              test_Labels.append("WestCoast")
                   
                   
              
@@ -140,7 +143,9 @@ def map_generator(train_data):
     
 def classifier(train_data, test_data):
     # This is just dummy code -- put yours here!
-    return [test_data["classes"][0]] * len(test_data["objects"])
+    map_generator(train_data)
+    probability(test_data)
+    return test_Labels
 
 
 if __name__ == "__main__":
