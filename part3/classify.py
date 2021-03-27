@@ -1,7 +1,8 @@
 import sys
 import math
 import nltk
-# from nltk.corpus import stopwords
+from nltk.corpus import stopwords
+nltk.download('stopwords')
 from collections import Counter
 east_coast={}
 west_coast={}
