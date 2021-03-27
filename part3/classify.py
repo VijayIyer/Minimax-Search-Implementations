@@ -1,12 +1,7 @@
-# classify.py : Classify text objects into two categories
-#
-# PLEASE PUT YOUR NAMES AND USER IDs HERE
-#
-# Based on skeleton code by D. Crandall, March 2021
-#
-
 import sys
 import math
+import nltk
+from nltk.corpus import stopwords
 east_coast={}
 west_coast={}
 test_Labels=[]
@@ -46,25 +41,42 @@ def clean_data(train_data,test_data):
         unfiltered_data[ i ] = unfiltered_data[ i ].replace( '@' , '' )
         unfiltered_data[ i ] = unfiltered_data[ i ].replace( '$' , '' )
         unfiltered_data[ i ] = unfiltered_data[ i ].replace( '%' , '' )
-        unfiltered__data[i]=unfiltered-_data[i].replace('.','')
-    
+        unfiltered_data[i]=unfiltered_data[i].replace('.','')
+
         unfiltered_data[i]=unfiltered_data[i].replace('-','')
         unfiltered_data[i]=unfiltered_data[i].replace(':','')
-        unfiltered__data[i]=unfiltered__data[i].replace('-','')
+        unfiltered_data[i]=unfiltered_data[i].replace('-','')
+        unfiltered_data[i]=unfiltered_data[i].replace('--------','')
         print( unfiltered_data)
-    unfiltered=train_data['objects']
-    for j in range(len(unfiltered)):
-        unfiltered[ j] = unfiltered[ j ].replace( '#' , '' )
-        unfiltered[j] = unfiltered[ j ].replace( '!' , '' )
-        unfiltered[ j] = unfiltered[ j].replace( '@' , '' )
-        unfiltered[ j] = unfiltered[ j].replace( '$' , '' )
-        unfiltered[ j] = unfiltered[ j ].replace( '%' , '' )
-        unfiltered[j]=unfiltered[i].replace('.','')
+        
+stop_words = set(stopwords.words('english'))
+# Open and read in a text file.
+txt_file = open("tweets.location.test.txt")
+txt_line = txt_file.read()
+txt_words = txt_line.split()
+ 
+# stopwords found counter.
+sw_found = 0
+ 
+# If each word checked is not in stopwords list,
+# then append word to a new text file.
+for check_word in txt_words:
+    if not check_word.lower() in stop_words:
+        # Not found on stopword list, so append.
+        appendFile = open('stopwords-removed.txt','a')
+        appendFile.write(" "+check_word)
+        appendFile.close()
+    else:
+        # It's on the stopword list
+        sw_found +=1
+        print(check_word)
+ 
+print(sw_found,"stop words found and removed")
+print("Saved as 'stopwords-removed.txt' ")
 
-        unfiltered[j]=unfiltered[j].replace('-','')
-        unfiltered[j]=unfiltered[j].replace(':','')
-        unfiltered[j]=unfiltered[j].replace('-','')
-        print( unfiltered)
+    
+   
+    
         
         
    
@@ -153,6 +165,6 @@ if __name__ == "__main__":
     print("Classification accuracy = %5.2f%%" % (100.0 * correct_ct / len(test_data["labels"])))
 
         
-    #clean_data( train_data , test_data )
-   # probability(train_data)
+   # clean_data( train_data , test_data )      
+##probability(train_data)
         
