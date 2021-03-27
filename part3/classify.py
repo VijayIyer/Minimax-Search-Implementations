@@ -2,6 +2,7 @@ import sys
 import math
 import nltk
 from nltk.corpus import stopwords
+from collections import Counter
 east_coast={}
 west_coast={}
 test_Labels=[]
@@ -47,7 +48,7 @@ def clean_data(train_data,test_data):
         unfiltered_data[i]=unfiltered_data[i].replace(':','')
         unfiltered_data[i]=unfiltered_data[i].replace('-','')
         unfiltered_data[i]=unfiltered_data[i].replace('--------','')
-        print( unfiltered_data)
+        # print( unfiltered_data)
         
 stop_words = set(stopwords.words('english'))
 # Open and read in a text file.
@@ -111,22 +112,28 @@ def map_generator(train_data):
                     west_coast[elem]+=1
                 else:
                     west_coast[elem]=1
-    print(east_coast)
-    print(west_coast)
+    # print(east_coast)
+    # print(west_coast)
                 
-def probability(test_data):
+def probability(test_data, train_data, east_coast, west_coast):
     for i in range(len(test_data['objects'])):
         test_data['objects'][i] = test_data['objects'][i].split()
         ec = 1
         wc = 1
         for elem in test_data['objects'][i]:
             if elem in east_coast:
-                ec *= math.exp(east_coast[elem]/sum(east_coast.values()))
+                ec *= ((east_coast[elem]/sum(east_coast.values()))+(1/len(east_coast.keys())))
+            else:
+                ec *= 1 / (sum(east_coast.values())+len(east_coast.keys()))
             if elem in west_coast:
-                wc *= math.exp(west_coast[elem]/sum(west_coast.values()))
-        # ECWC_count = Counter(train_data["labels"])
-        # ec *= ECWC_count["EastCoast"]/sum(ECWC_count.values())
-        # wc *= ECWC_count["WestCoast"]/sum(ECWC_count.values())
+                wc *= ((west_coast[elem]/sum(west_coast.values()))+(1/len(west_coast.keys())))
+            else:
+                wc *= 1 / (sum(west_coast.values())+len(west_coast.keys()))
+
+        ECWC_count = Counter(train_data["labels"])
+
+        ec *= ECWC_count["EastCoast"]/sum(ECWC_count.values())
+        wc *= ECWC_count["WestCoast"]/sum(ECWC_count.values())
         if(ec>wc):
               test_Labels.append("EastCoast")
         else:
@@ -143,8 +150,9 @@ def probability(test_data):
     
 def classifier(train_data, test_data):
     # This is just dummy code -- put yours here!
+    # clean_data(train_data, test_data)
     map_generator(train_data)
-    probability(test_data)
+    probability(test_data, train_data, east_coast, west_coast)
     return test_Labels
 
 
@@ -170,6 +178,6 @@ if __name__ == "__main__":
     print("Classification accuracy = %5.2f%%" % (100.0 * correct_ct / len(test_data["labels"])))
 
         
-   # clean_data( train_data , test_data )      
+# clean_data( train_data , test_data )
 ##probability(train_data)
         
