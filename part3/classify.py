@@ -71,10 +71,10 @@ for check_word in txt_words:
     else:
         # It's on the stopword list
         sw_found +=1
-        print(check_word)
+#         print(check_word)
  
-print(sw_found,"stop words found and removed")
-print("Saved as 'stopwords-removed.txt' ")
+# print(sw_found,"stop words found and removed")
+# print("Saved as 'stopwords-removed.txt' ")
 
     
    
