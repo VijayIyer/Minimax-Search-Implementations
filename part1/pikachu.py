@@ -405,11 +405,15 @@ def find_best_move(board, N, player, timelimit):
     current_state = State(board_2d, w_pieces, b_pieces)
     while True:
         boards = current_state.GetNextMoves(player)
-        for b in boards:
-            print('\n')
-            board_string = ConvertBoardTo1d(b.board, N)
-            board_string = "".join(str(i) for i in board_string)
-            yield board_string
+        if player =='w':
+            boards = sorted(boards,key=lambda t:len(t.b_pieces))
+        else:
+            boards = sorted(boards, key=lambda t: len(t.w_pieces))
+        # for b in boards:
+        #     print('\n')
+        board_string = ConvertBoardTo1d(boards[0].board, N)
+        board_string = "".join(str(i) for i in board_string)
+        yield board_string
 
 
 if __name__ == "__main__":
