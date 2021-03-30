@@ -1,5 +1,5 @@
 # Automatic Sebastian game player
-# B551 Fall 2020
+# B551 Spring 2021
 # VIJAY IYER, vsiyer@iu.edu
 #
 # Based on skeleton code by D. Crandall
@@ -92,7 +92,8 @@ class SebastianAutoPlayer:
             '''
             nodes = []
             predicted_rolls = []
-            for subset_size in range(0, 6):
+            subset_range = range(0,3) if roll_num == 1 else range(0, 6)
+            for subset_size in subset_range:
                 permuations = itertools.combinations(range(0,5), subset_size)
                 for rerolled_dice in permuations:
                     predicted_rolls = []
@@ -124,7 +125,7 @@ class SebastianAutoPlayer:
         computed_scorecard = self.ScoreMap[" ".join(str(i) for i in dice.dice)]
         for key in scorecard.scorecard.keys():
             computed_scorecard.scorecard[key] = 0
-        if sum(scorecard.Numbers.values()) + max(computed_scorecard.Numbers.values()) > 63 and scorecard.bonusscore ==0:
+        if sum([value for k, value in scorecard.scorecard.items() if k in scorecard.Numbers.keys()]) + max([value for k, value in computed_scorecard.scorecard.items() if k in scorecard.Numbers.keys()]) > 63 and not scorecard.bonusflag:
             return max(computed_scorecard.scorecard.values()) + 35
         return max(computed_scorecard.scorecard.values())
 
@@ -132,7 +133,7 @@ class SebastianAutoPlayer:
         # start_time = time.time()
         current_scorecard = GetAllScores(dice, scorecard)
         best_score = max(current_scorecard.scorecard.values())
-        max_value = max(self.Expectiminimax(dice, 2, scorecard, 'chance',[]),key=lambda t:t[0])
+        max_value = max(self.Expectiminimax(dice, 1, scorecard, 'chance',[]),key=lambda t:t[0])
         # print(f'\n{time.time() - start_time}')
         if max_value[0] > best_score:
             return max_value[1]
