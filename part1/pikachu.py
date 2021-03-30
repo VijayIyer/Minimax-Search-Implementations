@@ -409,7 +409,7 @@ def find_best_move(board, N, player, timelimit):
             print('\n')
             board_string = ConvertBoardTo1d(b.board, N)
             board_string = "".join(str(i) for i in board_string)
-            yield board_to_string(board_string, N)
+            yield board_string
 
 
 if __name__ == "__main__":
