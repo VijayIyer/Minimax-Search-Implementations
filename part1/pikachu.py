@@ -10,7 +10,6 @@ import sys
 import time
 import numpy as np
 import copy
-import random
 
 
 def EvaluateState(State, player):
@@ -481,15 +480,15 @@ def find_best_move(board, N, player, timelimit):
     current_state = State(board_2d, w_pieces, b_pieces)
     while True:
         boards = current_state.GetNextMoves(player)
-        # if player =='w':
-        #     boards.sort(key=lambda t:EvaluateState(t, player), reverse=True)
-        # else:
-        #     boards.sort(key=lambda t:EvaluateState(t, player), reverse=True)
+        if player =='w':
+            boards = sorted(boards,key=lambda t:EvaluateState(t, player), reverse=True)
+        else:
+            boards = sorted(boards, key=lambda t:EvaluateState(t, player), reverse=True)
         # for b in boards:
 
         # for b in boards:
             # print('\n')
-        board_string = ConvertBoardTo1d(random.choice(boards).board, N)
+        board_string = ConvertBoardTo1d(boards[0].board, N)
         board_string = "".join(str(i) for i in board_string)
         # yield board_to_string(board_string, N)
         yield board_string
