@@ -14,8 +14,8 @@ import copy
 
 def EvaluateState(State, player):
     if player == 'w':
-        return sum([p.position[0] for p in State.w_pieces])
-    return sum([p.position[0] for p in State.b_pieces])
+        return sum([p.position[0] for p in State.w_pieces]) - sum(State.b_pieces)
+    return sum([p.position[0] for p in State.b_pieces]) - sum(State.w_pieces)
 
 
 class Move:
