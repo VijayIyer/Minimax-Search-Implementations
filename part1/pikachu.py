@@ -413,9 +413,9 @@ def find_best_move(board, N, player, timelimit):
     while True:
         boards = current_state.GetNextMoves(player)
         if player =='w':
-            boards = sorted(boards,key=lambda t:EvaluateState(t , player))
+            boards = sorted(boards,key=lambda t:EvaluateState(t, player), reverse=True)
         else:
-            boards = sorted(boards, key=lambda t:EvaluateState(t , player))
+            boards = sorted(boards, key=lambda t:EvaluateState(t, player), reverse=True)
         # for b in boards:
         #     print('\n')
         board_string = ConvertBoardTo1d(boards[0].board, N)
