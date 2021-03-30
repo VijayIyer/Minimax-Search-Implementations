@@ -11,6 +11,13 @@ import time
 import numpy as np
 import copy
 
+
+def EvaluateState(State, player):
+    if player == 'w':
+        return sum([p.position[0] for p in State.w_pieces])
+    return sum([p.position[0] for p in State.b_pieces])
+
+
 class Move:
     def __init__(self, previous, current, captures):
         '''
@@ -406,9 +413,9 @@ def find_best_move(board, N, player, timelimit):
     while True:
         boards = current_state.GetNextMoves(player)
         if player =='w':
-            boards = sorted(boards,key=lambda t:len(t.b_pieces)-list(map(type, t.w_pieces)).count(Pikachu))
+            boards = sorted(boards,key=lambda t:EvaluateState(t , player))
         else:
-            boards = sorted(boards, key=lambda t: len(t.w_pieces)-list(map(type, t.b_pieces)).count(Pikachu))
+            boards = sorted(boards, key=lambda t:EvaluateState(t , player))
         # for b in boards:
         #     print('\n')
         board_string = ConvertBoardTo1d(boards[0].board, N)
