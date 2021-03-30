@@ -14,8 +14,8 @@ import copy
 
 def EvaluateState(State, player):
     if player == 'w':
-        return sum([p.position[0] for p in State.w_pieces]) - len(State.b_pieces)
-    return sum([p.position[0] for p in State.b_pieces]) - len(State.w_pieces)
+        return len(State.b_pieces)
+    return len(State.w_pieces)
 
 
 class Move:
@@ -100,7 +100,7 @@ class State:
         return NextStates
 
     def PromotePiece(self, position, player):
-        if player == 'w':
+        if player.color == 'w':
             promoted = None
             for p in self.w_pieces:
                 if p.position==position:
@@ -110,7 +110,7 @@ class State:
             new_piece = Pikachu('w', p.position, 'W')
             self.w_pieces.append(new_piece)
         else:
-            if player == 'b':
+            if player.color == 'b':
                 promoted = None
                 for p in self.b_pieces:
                     if p.position == position:
@@ -245,73 +245,141 @@ class Pikachu:
         return self.GetValidPositions(validmoves, b)
 
     def GetValidPositions(self, validmoves, b):
-        validpositions = []
-        if self.color == 'w':
-            for move in validmoves:
-                if move == 'forward' and b[self.position[0] + 1][self.position[1]] == '.':
-                    validpositions.append(Move(self.position, [self.position[0] + 1, self.position[1]], []))
-                if move == 'forward' and self.position[0] + 2 < len(b) and (b[self.position[0] + 1][
-                    self.position[1]] == 'b' or self.position[0] + 2 < len(b) and b[self.position[0] + 1][
-                    self.position[1]] == 'B') \
-                        and b[self.position[0] + 2][self.position[1]] == '.':
-                    validpositions.append(Move(self.position, [self.position[0] + 2, self.position[1]],
-                                               [self.position[0] + 1, self.position[1]]))
-                if move == 'left' and b[self.position[0]][self.position[1] - 1] == '.':
-                    validpositions.append(Move(self.position, [self.position[0], self.position[1] - 1], []))
-                if move == 'left' and self.position[1] - 2 >= 0 and (b[self.position[0]][self.position[1] - 1] == 'b' or
-                    b[self.position[0]][self.position[1] - 1] == 'B') \
-                        and b[self.position[0]][self.position[1] - 2] == '.':
-                    validpositions.append(Move(self.position, [self.position[0], self.position[1] - 2],
-                                               [self.position[0], self.position[1] - 1]))
-                if move == 'right' and b[self.position[0]][self.position[1] + 1] == '.':
-                    validpositions.append(Move(self.position, [self.position[0], self.position[1] + 1], []))
-                if move == 'right' and self.position[1] + 2 < len(b[0]) and (b[self.position[0]][
-                    self.position[1] + 1] == 'b' or b[self.position[0]][
-                    self.position[1] + 1] == 'B') \
-                        and b[self.position[0]][self.position[1] + 2] == '.':
-                    validpositions.append(Move(self.position, [self.position[0], self.position[1] + 2],
-                                               [self.position[0], self.position[1] + 1]))
-                if move == 'back' and b[self.position[0] - 1][self.position[1]] == '.':
-                    validpositions.append(Move(self.position, [self.position[0] - 1, self.position[1]], []))
-                if move == 'back' and self.position[0] - 2 >= 0 and (b[self.position[0] - 1][
-                    self.position[1]] == 'b' or b[self.position[0] - 1][self.position[1]] == 'B') \
-                        and b[self.position[0] - 2][self.position[1]] == '.':
-                    validpositions.append(Move(self.position, [self.position[0] - 2, self.position[1]],
-                                               [self.position[0] - 1, self.position[1]]))
-        else:
-            for move in validmoves:
-                if move == 'forward' and b[self.position[0] + 1][self.position[1]] == '.':
-                    validpositions.append(Move(self.position, [self.position[0] + 1, self.position[1]], []))
-                if move == 'forward' and self.position[0] + 2 < len(b) and (b[self.position[0] + 1][
-                    self.position[1]] == 'w' or b[self.position[0] + 1][
-                    self.position[1]] == 'W') \
-                        and b[self.position[0] + 2][self.position[1]] == '.':
-                    validpositions.append(Move(self.position, [self.position[0] + 2, self.position[1]],
-                                               [self.position[0] + 1, self.position[1]]))
-                if move == 'left' and b[self.position[0]][self.position[1] - 1] == '.':
-                    validpositions.append(Move(self.position, [self.position[0], self.position[1] - 1], []))
-                if move == 'left' and self.position[1] - 2 >= 0 and (b[self.position[0]][self.position[1] - 1] ==
-                        'w' or b[self.position[0]][self.position[1] - 1] == 'W') \
-                        and b[self.position[0] - 2][self.position[1]] == '.':
-                    validpositions.append(Move(self.position, [self.position[0], self.position[1] - 2],
-                                               [self.position[0], self.position[1] - 1]))
-                if move == 'right' and b[self.position[0]][self.position[1] + 1] == '.':
-                    validpositions.append(Move(self.position, [self.position[0], self.position[1] + 1], []))
-                if move == 'right' and self.position[1] + 2 < len(b[0]) and (b[self.position[0]][
-                    self.position[1] + 1] == 'w' or b[self.position[0]][
-                    self.position[1] + 1]== 'W') \
-                        and b[self.position[0]][self.position[1] + 2] == '.':
-                    validpositions.append(Move(self.position, [self.position[0], self.position[1] + 2],
-                                               [self.position[0], self.position[1] + 1]))
-                if move == 'back' and b[self.position[0] - 1][self.position[1]] == '.':
-                    validpositions.append(Move(self.position, [self.position[0] - 1, self.position[1]], []))
-                if move == 'back' and self.position[0] - 2 >= 0 and (b[self.position[0] - 1][self.position[1]] ==
-                        'w' or b[self.position[0] - 1][self.position[1]] == 'W') \
-                        and b[self.position[0] - 2][self.position[1]] == '.':
-                    validpositions.append(Move(self.position, [self.position[0] - 2, self.position[1]],
-                                               [self.position[0] - 1, self.position[1]]))
-        return validpositions
+        validMoves = []
+        if 'forward' in validmoves:
+            validMoves.extend([move for move in self.WalkForward(self.position, b)])
+        if 'back' in validmoves:
+            validMoves.extend([move for move in self.WalkBack(self.position, b)])
+        if 'right' in validmoves:
+            validMoves.extend([move for move in self.WalkRight(self.position, b)])
+        if 'left' in validmoves:
+            validMoves.extend([move for move in self.WalkLeft(self.position, b)])
 
+        return validMoves
+
+    def WalkForward(self, position, b):
+        moves = []
+        jumpedpiece = []
+        jumped = 0
+        current = position[0]
+        while current + 1 <= len(b) - 1 and b[current + 1][position[1]] == '.':
+            moves.append(Move(self.position, [current + 1, position[1]], []))
+            current += 1
+        if current +1 <= len(b) - 1:
+            if self.color == 'w' and (b[current+1][position[1]] == 'b' or b[current+1][position[1]] == 'B'):
+
+                jumpedpiece = [current+1,position[1]]
+                current += 2
+                jumped = 1
+            elif self.color == 'b' and (b[current+1][position[1]] == 'w' or b[current+1][position[1]] == 'W'):
+
+                jumpedpiece = [current+1,position[1]]
+                current += 2
+                jumped = 1
+        if jumped:
+            if self.color == 'w':
+                while current <= len(b) - 1 and (b[current][position[1]] != 'b' or b[current][position[1]] != 'B') and b[current][position[1]] == '.':
+                    moves.append(Move(self.position, [current, position[1]], jumpedpiece))
+                    current += 1
+            if self.color == 'b':
+                while current <= len(b) - 1 and (b[current][position[1]] != 'w' or b[current+1][position[1]] != 'W') and b[current][position[1]] == '.':
+                    moves.append(Move(self.position, [current, position[1]], jumpedpiece))
+                    current += 1
+        return moves
+
+
+    def WalkRight(self, position, b):
+        moves = []
+        jumpedpiece = []
+        jumped = 0
+        current = position[1]
+        while current + 1 <= len(b[0])-1 and b[position[0]][current + 1] == '.':
+            moves.append(Move(self.position, [position[0], current + 1], []))
+            current += 1
+        if current + 1 <= len(b[0])-1:
+            if self.color == 'w' and (b[position[0]][current + 1] == 'b' or b[position[0]][current + 1] == 'B'):
+                jumpedpiece = [position[0], current + 1]
+                current += 2
+                jumped = 1
+        if current + 1 <= len(b[0])-1:
+            if self.color == 'b' and (b[position[0]][current + 1] == 'w' or b[position[0]][current + 1] == 'W'):
+                jumpedpiece = [position[0],current + 1]
+                current += 2
+                jumped = 1
+        if jumped:
+            if self.color == 'w':
+                while current <= len(b[0]) - 1 and (b[position[0]][current] != 'b' or b[position[0]][current] != 'B') and \
+                        b[position[0]][current] == '.':
+                    moves.append(Move(self.position, [position[0], current], jumpedpiece))
+                    current += 1
+            if self.color == 'b':
+                while current <= len(b) - 1 and (b[position[0]][current] != 'w' or b[position[0]][current] != 'W') \
+                        and b[position[0]][current] == '.':
+                    moves.append(Move(self.position, [position[0],current], jumpedpiece))
+                    current += 1
+        return moves
+
+
+    def WalkLeft(self, position, b):
+        moves = []
+        jumpedpiece = []
+        jumped = 0
+        current = position[1]
+        while current - 1 >= 0 and b[position[0]][current - 1] == '.':
+            moves.append(Move(self.position, [position[0], current - 1], []))
+            current -= 1
+        if current - 1 >= 0:
+            if self.color == 'w' and (b[position[0]][current - 1] == 'b' or b[position[0]][current - 1] == 'B'):
+                jumpedpiece = [position[0], current - 1]
+                current -= 2
+                jumped = 1
+            elif self.color == 'b' and (b[position[0]][current - 1] == 'w' or b[position[0]][current - 1] == 'W'):
+                jumpedpiece = [position[0], current - 1]
+                current -= 2
+                jumped = 1
+        if jumped:
+            if self.color == 'w':
+                while current >= 0 and (b[position[0]][current] != 'b' or b[position[0]][current] != 'B') and \
+                        b[position[0]][current] == '.':
+                    moves.append(Move(self.position, [position[0], current], jumpedpiece))
+                    current -= 1
+            if self.color == 'b':
+                while current >= 0 and (b[position[0]][current] != 'w' or b[position[0]][current] != 'W') \
+                        and b[position[0]][current] == '.':
+                    moves.append(Move(self.position, [position[0], current], jumpedpiece))
+                    current -= 1
+        return moves
+
+
+    def WalkBack(self, position, b):
+        moves = []
+        jumpedpiece = []
+        jumped = 0
+        current = position[0]
+        while current - 1 >= 0 and b[current - 1][position[1]] == '.':
+            moves.append(Move(self.position, [current - 1, position[1]], []))
+            current -= 1
+        if current - 1 >= 0:
+            if self.color == 'w' and (b[current - 1][position[1]] == 'b' or b[current - 1][position[1]] == 'B'):
+                jumpedpiece = [current - 1, position[1]]
+                current -= 2
+                jumped = 1
+            if self.color == 'b' and (b[current - 1][position[1]] == 'w' or b[current - 1][position[1]] == 'W'):
+                jumpedpiece = [current - 1, position[1]]
+                current -= 2
+                jumped = 1
+        if jumped:
+            if self.color == 'w':
+                while current >= 0 and (b[current][position[1]] != 'b' or b[current][position[1]] != 'B') and \
+                        b[current][position[1]] == '.':
+                    moves.append(Move(self.position, [current, position[1]], jumpedpiece))
+                    current -= 1
+            if self.color == 'b':
+                while current >= 0 and (
+                        b[current][position[1]] != 'w' or b[current + 1][position[1]] != 'W') and b[current][position[1]] == '.':
+                    moves.append(Move(self.position, [current, position[1]], jumpedpiece))
+                    current -= 1
+        return moves
 
 def board_to_string(board, N):
     return "\n".join(board[i:i+N] for i in range(0, len(board), N))
@@ -417,11 +485,13 @@ def find_best_move(board, N, player, timelimit):
         else:
             boards = sorted(boards, key=lambda t:EvaluateState(t, player), reverse=True)
         # for b in boards:
-        #     print('\n')
-        board_string = ConvertBoardTo1d(boards[0].board, N)
-        board_string = "".join(str(i) for i in board_string)
-        # yield board_to_string(board_string, N)
-        yield board_string
+
+        for b in boards:
+            print('\n')
+            board_string = ConvertBoardTo1d(b.board, N)
+            board_string = "".join(str(i) for i in board_string)
+            yield board_to_string(board_string, N)
+        # yield board_string
 
 
 if __name__ == "__main__":
