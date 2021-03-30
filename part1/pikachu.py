@@ -406,9 +406,9 @@ def find_best_move(board, N, player, timelimit):
     while True:
         boards = current_state.GetNextMoves(player)
         if player =='w':
-            boards = sorted(boards,key=lambda t:len(t.b_pieces)+list(map(type, t.w_pieces)).count(Pikachu))
+            boards = sorted(boards,key=lambda t:len(t.b_pieces)-list(map(type, t.w_pieces)).count(Pikachu))
         else:
-            boards = sorted(boards, key=lambda t: len(t.w_pieces)+list(map(type, t.b_pieces)).count(Pikachu))
+            boards = sorted(boards, key=lambda t: len(t.w_pieces)-list(map(type, t.b_pieces)).count(Pikachu))
         # for b in boards:
         #     print('\n')
         board_string = ConvertBoardTo1d(boards[0].board, N)
