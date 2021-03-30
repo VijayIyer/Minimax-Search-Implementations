@@ -406,13 +406,14 @@ def find_best_move(board, N, player, timelimit):
     while True:
         boards = current_state.GetNextMoves(player)
         if player =='w':
-            boards = sorted(boards,key=lambda t:len(t.b_pieces))
+            boards = sorted(boards,key=lambda t:len(t.b_pieces)+len(type(t.w_pieces) is Pikachu))
         else:
-            boards = sorted(boards, key=lambda t: len(t.w_pieces))
+            boards = sorted(boards, key=lambda t: len(t.w_pieces)+len(type(t.b_pieces) is Pikachu))
         # for b in boards:
         #     print('\n')
         board_string = ConvertBoardTo1d(boards[0].board, N)
         board_string = "".join(str(i) for i in board_string)
+        # yield board_to_string(board_string, N)
         yield board_string
 
 
