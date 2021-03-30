@@ -27,10 +27,12 @@
  - 4. Most importantly, its taking a long time for a single roll of dice when we take all the subsets and all combinations of indexes. This is because there are in total 1431 different outcomes possible. This needs to be across 2 levels, making it in the order of a lakh nodes. To work around this, we tried **(1)** to take only shorter subsets(e.g only 0 or 1 or 2 dice allowed to be rerolled) in the first reroll and then all the subsets in the 2nd reroll (since the 2nd reroll is all leaf nodes). **(2)** Direcly only computing expected values in the first lavel itself. This means our tree would be only 2 levels deep in total instead of 3. We found that **(1)** **(2)** dont give significantly different scores on average. Also, on average the scores are around 210, whereas expected is around 250
  
 ---------------------------------------------------------------
-
+**PROBLEM 3 -DOCUMENT CLASSIFICATION**
 3)PROBLEM STATEMENT: The problem makes use of the concept of Naives Bayes implementation for classifying tweets and calculating the accurracy.Naive Bayes technique can be used to classify several textual objects such as documents,emails,tweets into two specific cateogories such as spam vs non spam,important vs unimportant,acceptable vs inapproriate and so on.This technique uses a "bag of words" model.In this problem we have considered a textual object D which contains words w1,w2,w3....wn. There are two classes A and B. The classifier decides which class the object belongs to. 
 
 IMPLEMENTATION:Firstly the testing and training data has been provided to us in form of tweets with labels East Coast and West Coast. These tweets are unordered.Firstly to improve the accuracy I had cleaned the data which means I have removed the special characters,puncuations and so on. For this I stored test_data[objects] into a variable called unfiltered data. A loop has then been set to traverse through unfiltered data. When a special character or a character is observed it is replaced by ''. 
+
+For "cleaning the data", the stopwords had to removed as well. Stopwords are generally referred to as a "single set of words"
 
 Then after the data has been cleaned the probabilty and the classification is carried about. For doing this two maps called east_coast and west_coast is created.If the test_data[labels] is east coast the element is added to the east_coast map. Similarly if thr label is west coast, it is moved to west coast map. 
 
