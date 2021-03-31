@@ -92,7 +92,7 @@ class SebastianAutoPlayer:
             '''
             nodes = []
             predicted_rolls = []
-            subset_range = range(0,3) if roll_num == 1 else range(0, 6)
+            subset_range = range(0,2) if roll_num == 1 else range(0, 6)
             for subset_size in subset_range:
                 permuations = itertools.combinations(range(0,5), subset_size)
                 for rerolled_dice in permuations:
