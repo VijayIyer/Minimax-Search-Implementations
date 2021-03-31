@@ -12,10 +12,20 @@ import numpy as np
 import copy
 
 
+# def Minimax(CurrentState, level):
+#     if level == 'terminal':
+#         return EvaluateState(CurrentState)
+#
+#     elif level == 'Min':
+#         return Min(CurrentState.GetNextMoves)
+#
+#     elif level == 'Max':
+#         return Max()
+
 def EvaluateState(State, player):
     if player == 'w':
-        return len(State.b_pieces) - max([i.position[0] for i in State.b_pieces])
-    return len(State.w_pieces) - max([i.position[0] for i in State.b_pieces])
+        return len(State.b_pieces) - sum([i.position[0] for i in State.b_pieces])
+    return len(State.w_pieces) - sum([i.position[0] for i in State.b_pieces])
 
 class Move:
     def __init__(self, previous, current, captures):
