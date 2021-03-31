@@ -51,9 +51,9 @@ def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
         for state in next_States:
             bestnode_State = Minimax(state, 'Min', player, visitedstates, recursiondepth + 1)
             if max_value is None:
-                max_value = bestnode_State[0], state
+                max_value = EvaluateState(bestnode_State[1], player), state
             else:
-                max_value = max([max_value, (bestnode_State[0], state)], key=lambda t:t[0])
+                max_value = max([max_value, (EvaluateState(bestnode_State[1], player), state)], key=lambda t:t[0])
         return max_value[0],max_value[1]
 
 
