@@ -60,7 +60,7 @@ def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
 def EvaluateState(State, player):
     strength = 0
     if player == 'w':
-        len(State.w_pieces) - len(State.b_pieces)
+        return len(State.w_pieces) - len(State.b_pieces)
     return len(State.b_pieces) - len(State.w_pieces)
 
 
