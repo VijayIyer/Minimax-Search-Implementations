@@ -14,8 +14,8 @@ import copy
 
 def EvaluateState(State, player):
     if player == 'w':
-        return -len(State.b_pieces)
-    return -len(State.w_pieces)
+        return sum([(len(State.board)/2 - abs(i.position[0]) + len(State.board[0])/2 - abs(i.position[1])) for i in State.w_pieces])
+    return sum([(len(State.board)/2 - abs(i.position[0]) + len(State.board[0])/2 - abs(i.position[1])) for i in State.b_pieces])
 
 
 class Move:
@@ -479,15 +479,15 @@ def find_best_move(board, N, player, timelimit):
     w_pieces, b_pieces = GetPieces(board_2d, N)
     current_state = State(board_2d, w_pieces, b_pieces)
     while True:
+        start = time.time()
         boards = current_state.GetNextMoves(player)
+        print(time.time() - start)
+        current_state = boards[0]
+
         if player =='w':
             boards = sorted(boards,key=lambda t:EvaluateState(t, player), reverse=True)
         else:
             boards = sorted(boards, key=lambda t:EvaluateState(t, player), reverse=True)
-        # for b in boards:
-
-        # for b in boards:
-            # print('\n')
         board_string = ConvertBoardTo1d(boards[0].board, N)
         board_string = "".join(str(i) for i in board_string)
         # yield board_to_string(board_string, N)
