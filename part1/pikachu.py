@@ -480,10 +480,10 @@ def find_best_move(board, N, player, timelimit):
     w_pieces, b_pieces = GetPieces(board_2d, N)
     current_state = State(board_2d, w_pieces, b_pieces)
     while True:
-        start = time.time()
+        # start = time.time()
         boards = current_state.GetNextMoves(player)
-        print(time.time() - start)
-        current_state = boards[0]
+        # print(time.time() - start)
+        # current_state = boards[0]
 
         if player =='w':
             boards = sorted(boards,key=lambda t:EvaluateState(t, player), reverse=True)
