@@ -115,7 +115,7 @@ class SebastianAutoPlayer:
             max_value = max(max_nodes, key=lambda t:t[0])
             return max_value
 
-    def Utility(self, dice:Dice, scorecard):
+    def Utility(self, dice, scorecard):
         '''
         :param dice: the outcome of the rolled dice
         :param scorecard: keeps track of which categories have already been picked and doesnt
