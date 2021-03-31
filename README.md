@@ -9,7 +9,8 @@
   - 1. We create 2 classes 'pichu' and 'Pikachu' for the type of pieces that can be present on the board. A class 'State' has the list of white pieces, black pieces and the board state. The properties of pichu and Pikachu are color(side), Character(text character on the board),position(row ,column) 
   - 2. When a board state is input, we convert it to 2d list and pass it to our function 'GetNextMoves', tries to find all valid moves for each piece of the players color. We store each valid move with a Move class, which is used to denote the previous position of a piece, position after the move and captured piece position. Our UpdateBoard method takes care of chaning the position of each piece and also removing and replacing captured and Promoted pieces 
 
-  - 3. We experimented with many evaluation functions, like  -no. of pieces, sum of column indexes(reverse sorting), sum of row indexes(reverse sorting), the idea being that if a nexrt board
+  - 3. We experimented with many evaluation functions, like  -no. of pieces, sum of column indexes(reverse sorting), sum of row indexes(reverse sorting), the idea being that if a next board state has a high row index sum, means the next move preferred will be one moving forward. SImilarly for no. of pieces of opposition, the preferred move will be a capture
+   - 4. We werent able to implement the Minimax algo due to computation time.
 ---------------------------------------------------------------------------------------------------------------------------------------------
 
 **Problem 2 - Sebastian** - 
