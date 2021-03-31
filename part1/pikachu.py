@@ -13,7 +13,7 @@ import copy
 
 
 def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
-    if recursiondepth == 2:
+    if recursiondepth == 3:
         return EvaluateState(CurrentState, player), CurrentState
     if player == 'w' and len(CurrentState.w_pieces) == 0:
         visitedstates.append((-10*EvaluateState(CurrentState, player), CurrentState))
@@ -35,7 +35,7 @@ def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
         next_States = CurrentState.GetNextMoves('b' if player=='w' else 'w')
         min_value = None
         for state in next_States:
-            bestnode_State = Minimax(state, 'Max', 'b' if player == 'w' else 'w', visitedstates, recursiondepth)
+            bestnode_State = Minimax(state, 'Max', 'b' if player == 'w' else 'w', visitedstates, recursiondepth+1)
             if min_value is None:
                 min_value = bestnode_State[0], state
             else:
