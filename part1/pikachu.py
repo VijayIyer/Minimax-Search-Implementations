@@ -25,7 +25,7 @@ import copy
 def EvaluateState(State, player):
     if player == 'w':
         return 2*len(State.w_pieces) + sum([i.position[1] for i in State.w_pieces])
-    return 2*len(State.b_pieces) + sum([i.position[1] for i in State.w_pieces])
+    return 2*len(State.b_pieces) + sum([i.position[1] for i in State.b_pieces])
 
 class Move:
     def __init__(self, previous, current, captures):
