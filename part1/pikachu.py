@@ -13,7 +13,7 @@ import copy
 
 
 def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
-    if recursiondepth == 5:
+    if recursiondepth == 3:
         return EvaluateState(CurrentState, player), CurrentState
     if player == 'w' and len(CurrentState.w_pieces) == 0:
         visitedstates.append((-10*EvaluateState(CurrentState, player), CurrentState))
@@ -37,9 +37,9 @@ def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
         for state in next_States:
             bestnode_State = Minimax(state, 'Max', 'b' if player == 'w' else 'w', visitedstates, recursiondepth + 1)
             if min_value is None:
-                min_value = bestnode_State
+                min_value = bestnode_State[0], state
             else:
-                min_value = min([min_value, bestnode_State], key=lambda t: t[0])
+                min_value = min([min_value, (bestnode_State[0], state)], key=lambda t: t[0])
         return min_value[0], min_value[1]
 
     elif level == 'Max':
@@ -51,9 +51,9 @@ def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
         for state in next_States:
             bestnode_State = Minimax(state, 'Min', player, visitedstates, recursiondepth + 1)
             if max_value is None:
-                max_value = bestnode_State
+                max_value = bestnode_State[0], state
             else:
-                max_value = max([max_value, bestnode_State], key=lambda t:t[0])
+                max_value = max([max_value, (bestnode_State[0], state)], key=lambda t:t[0])
         return max_value[0],max_value[1]
 
 
