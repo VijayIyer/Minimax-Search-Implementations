@@ -537,8 +537,8 @@ def find_best_move(board, N, player, timelimit):
         #     boards = sorted(boards, key=lambda t:EvaluateState(t, player))
         board_string = ConvertBoardTo1d(best_move[1].board, N)
         board_string = "".join(str(i) for i in board_string)
-        yield board_to_string(board_string, N)
-        # yield board_string
+        # yield board_to_string(board_string, N)
+        yield board_string
 
 
 if __name__ == "__main__":
