@@ -133,7 +133,7 @@ class SebastianAutoPlayer:
         # start_time = time.time()
         current_scorecard = GetAllScores(dice, scorecard)
         best_score = max(current_scorecard.scorecard.values())
-        max_value = max(self.Expectiminimax(dice, 1, scorecard, 'chance',[]),key=lambda t:t[0])
+        max_value = max(self.Expectiminimax(dice, 2, scorecard, 'chance',[]),key=lambda t:t[0])
         # print(f'\n{time.time() - start_time}')
         if max_value[0] > best_score:
             return max_value[1]
