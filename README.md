@@ -1,5 +1,16 @@
 **Problem 1 - Pikachu** - 
-1. 
+ - 1. Problem Statement - Given a state of the board, we need to make the best possible next move such that our player wins the game if it continues.
+ - 2. The solution to this problem is to calculate the Minimax score for a given board state with the player given. If player is w, then it means w is treated as Max player and we need to find the best move for w. 
+ - 3. Our Max node will look at all possible valid moves for player given from the given state of the board. 
+ - 4. The next layer will be a Min, where the best possible moves by the other player will be calculated by taking the Min of the Max nodes below it(these can be thought of as all possible moves after the min player has responded to our move - that is for all responses to our move). Ideally, We need to keep building the game tree until we reach leaf nodes for all branches of the tree. We reach a leaf node, when we either win or lose the game, which in this game Pikachu is given by all Max player's pieces being captured(-1) or all Min player's pieces being captured. 
+ - 5. In practice, however, generating the whole game tree will take computationally long time. So, we could to 2 things - **(1).** Alpha-beta Pruning to prune the nodes which we know will not have an effect on the decision made at a Min or Max node. **(2)** Measure the utility value of a given board state using an evaluation function, so that we can stop early in our game tree and return this value instead of waiting to reach the terminal nodes and backing up those values. 
+ 
+ **Implementation Details/ challenges** - 
+  - 1. We create 2 classes 'pichu' and 'Pikachu' for the type of pieces that can be present on the board. A class 'State' has the list of white pieces, black pieces and the board state. The properties of pichu and Pikachu are color(side), Character(text character on the board),position(row ,column) 
+  - 2. When a board state is input, we convert it to 2d list and pass it to our function 'GetNextMoves', tries to find all valid moves for each piece of the players color. We store each valid move with a Move class, which is used to denote the previous position of a piece, position after the move and captured piece position. Our UpdateBoard method takes care of chaning the position of each piece and also removing and replacing captured and Promoted pieces 
+
+  - 3. We experimented with many evaluation functions, like  -no. of pieces, sum of column indexes(reverse sorting), sum of row indexes(reverse sorting), the idea being that if a nexrt board
+---------------------------------------------------------------------------------------------------------------------------------------------
 
 **Problem 2 - Sebastian** - 
  - 1. Problem Statement - Given a die roll in 1 of 13 turns, we need to make a decision such that obtained score is maximized across all turns. The decision is made up of 2 parts
