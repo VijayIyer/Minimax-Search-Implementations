@@ -13,7 +13,7 @@ import copy
 
 
 def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
-    if recursiondepth == 1:
+    if recursiondepth == 5:
         return EvaluateState(CurrentState, player), CurrentState
     if player == 'w' and len(CurrentState.w_pieces) == 0:
         visitedstates.append((-10*EvaluateState(CurrentState, player), CurrentState))
