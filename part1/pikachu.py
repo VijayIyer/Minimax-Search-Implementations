@@ -60,8 +60,19 @@ def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
 def EvaluateState(State, player):
     strength = 0
     if player == 'w':
-        return len(State.w_pieces) - len(State.b_pieces)
-    return len(State.b_pieces) - len(State.w_pieces)
+        for w in State.w_pieces:
+            strength += len(State.board)/2 if type(w) is Pikachu else 1
+        for w in State.w_pieces:
+            if w.position[0] > 0 and type(w) is pichu and State.board[w.position[0]-1][w.position[1]] == 'w':
+                strength += 1
+        return len(State.w_pieces) - len(State.b_pieces) + strength + (sum([w.position[0] for w in State.w_pieces])/len(State.w_pieces))
+    else:
+        for b in State.b_pieces:
+            strength += len(State.board)/2 if type(b) is Pikachu else 1
+        for b in State.w_pieces:
+            if b.position[0] < len(State.board) and type(b) is pichu and State.board[b.position[0]+1][b.position[1]] == 'b':
+                strength += 1
+        return len(State.b_pieces) - len(State.w_pieces) + strength + (sum([b.position[0] for b in State.b_pieces])/len(State.b_pieces))
 
 
 class Move:
