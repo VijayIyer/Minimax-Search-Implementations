@@ -526,20 +526,20 @@ def find_best_move(board, N, player, timelimit):
     visited_states = []
     recursiondepth = 0
     best_move = Minimax(current_state, 'Max', player, visited_states, recursiondepth)
-    while True:
-        # # start = time.time()
-        # boards = current_state.GetNextMoves(player)
-        # # print(time.time() - start)
-        # # current_state = boards[0]
-        #
-        # if player =='w':
-        #     boards = sorted(boards,key=lambda t:EvaluateState(t, player))
-        # else:
-        #     boards = sorted(boards, key=lambda t:EvaluateState(t, player))
-        board_string = ConvertBoardTo1d(best_move[1].board, N)
-        board_string = "".join(str(i) for i in board_string)
-        # yield board_to_string(board_string, N)
-        yield board_string
+
+    # # start = time.time()
+    # boards = current_state.GetNextMoves(player)
+    # # print(time.time() - start)
+    # # current_state = boards[0]
+    #
+    # if player =='w':
+    #     boards = sorted(boards,key=lambda t:EvaluateState(t, player))
+    # else:
+    #     boards = sorted(boards, key=lambda t:EvaluateState(t, player))
+    board_string = ConvertBoardTo1d(best_move[1].board, N)
+    board_string = "".join(str(i) for i in board_string)
+    # yield board_to_string(board_string, N)
+    yield board_string
 
 
 if __name__ == "__main__":
@@ -557,7 +557,6 @@ if __name__ == "__main__":
 
     print("Searching for best move for " + player + " from board state: \n" + board_to_string(board, N))
     print("Here's what I decided:")
-    start = time.time()
+    # start = time.time()
     for new_board in find_best_move(board, N, player, timelimit):
         print(new_board)
-        print(time.time() - start)
