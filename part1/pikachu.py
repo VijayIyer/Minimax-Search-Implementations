@@ -12,20 +12,56 @@ import numpy as np
 import copy
 
 
-# def Minimax(CurrentState, level):
-#     if level == 'terminal':
-#         return EvaluateState(CurrentState)
-#
-#     elif level == 'Min':
-#         return Min(CurrentState.GetNextMoves)
-#
-#     elif level == 'Max':
-#         return Max()
+def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
+    if recursiondepth == 1:
+        return EvaluateState(CurrentState, player), CurrentState
+    if player == 'w' and len(CurrentState.w_pieces) == 0:
+        visitedstates.append((-10*EvaluateState(CurrentState, player), CurrentState))
+        return -10*EvaluateState(CurrentState, player), CurrentState
+    elif player == 'w' and len(CurrentState.b_pieces) == 0:
+        visitedstates.append((10*EvaluateState(CurrentState, player), CurrentState))
+        return 10*EvaluateState(CurrentState, player), CurrentState
+    elif player == 'b' and len(CurrentState.b_pieces) == 0:
+        visitedstates.append((-10*EvaluateState(CurrentState, player), CurrentState))
+        return -10*EvaluateState(CurrentState, player), CurrentState
+    elif player == 'b' and len(CurrentState.b_pieces) == 0:
+        visitedstates.append((10*EvaluateState(CurrentState, player), CurrentState))
+        return 10*EvaluateState(CurrentState, player), CurrentState
+
+    if level == 'Min':
+        for item in visitedstates:
+            if CurrentState == item[1]:
+                return item[0], item[1]
+        next_States = CurrentState.GetNextMoves('b' if player=='w' else 'w')
+        min_value = None
+        for state in next_States:
+            bestnode_State = Minimax(state, 'Max', 'b' if player == 'w' else 'w', visitedstates, recursiondepth + 1)
+            if min_value is None:
+                min_value = bestnode_State
+            else:
+                min_value = min([min_value, bestnode_State], key=lambda t: t[0])
+        return min_value[0], min_value[1]
+
+    elif level == 'Max':
+        for item in visitedstates:
+            if CurrentState == item[1]:
+                return item[0], item[1]
+        next_States = CurrentState.GetNextMoves(player)
+        max_value = None
+        for state in next_States:
+            bestnode_State = Minimax(state, 'Min', player, visitedstates, recursiondepth + 1)
+            if max_value is None:
+                max_value = bestnode_State
+            else:
+                max_value = max([max_value, bestnode_State], key=lambda t:t[0])
+        return max_value[0],max_value[1]
+
 
 def EvaluateState(State, player):
     if player == 'w':
-        return len(State.b_pieces) - max([i.position[0] for i in State.w_pieces])
-    return len(State.w_pieces) - max([(len(State.board) - i.position[0]) for i in State.b_pieces])
+        return -len(State.b_pieces)
+    return -len(State.w_pieces)
+
 
 class Move:
     def __init__(self, previous, current, captures):
@@ -38,7 +74,6 @@ class Move:
         self.previous = previous
         self.current = current
         self.captures = captures
-
 
 
 def UpdateBoard(State, move, player):
@@ -81,7 +116,6 @@ def UpdateBoard(State, move, player):
         State.PromotePiece(move.current, player)
         State.board[move.current[0]][move.current[1]] = 'B'
     return State
-
 
 
 class State:
@@ -390,6 +424,7 @@ class Pikachu:
                     current -= 1
         return moves
 
+
 def board_to_string(board, N):
     return "\n".join(board[i:i+N] for i in range(0, len(board), N))
 
@@ -487,20 +522,23 @@ def find_best_move(board, N, player, timelimit):
     board_2d = ConvertBoardTo2d(board,N)
     w_pieces, b_pieces = GetPieces(board_2d, N)
     current_state = State(board_2d, w_pieces, b_pieces)
+    visited_states = []
+    recursiondepth = 0
+    best_move = Minimax(current_state, 'Max', player, visited_states, recursiondepth)
     while True:
-        # start = time.time()
-        boards = current_state.GetNextMoves(player)
-        # print(time.time() - start)
-        # current_state = boards[0]
-
-        if player =='w':
-            boards = sorted(boards,key=lambda t:EvaluateState(t, player))
-        else:
-            boards = sorted(boards, key=lambda t:EvaluateState(t, player))
-        board_string = ConvertBoardTo1d(boards[0].board, N)
+        # # start = time.time()
+        # boards = current_state.GetNextMoves(player)
+        # # print(time.time() - start)
+        # # current_state = boards[0]
+        #
+        # if player =='w':
+        #     boards = sorted(boards,key=lambda t:EvaluateState(t, player))
+        # else:
+        #     boards = sorted(boards, key=lambda t:EvaluateState(t, player))
+        board_string = ConvertBoardTo1d(best_move[1].board, N)
         board_string = "".join(str(i) for i in board_string)
-        # yield board_to_string(board_string, N)
-        yield board_string
+        yield board_to_string(board_string, N)
+        # yield board_string
 
 
 if __name__ == "__main__":
