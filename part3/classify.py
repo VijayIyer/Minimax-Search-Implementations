@@ -33,11 +33,11 @@ def load_file(filename):
 # Do not change the return type or parameters of this function!
 
 #
-def clean_data(train_data,test_data):
+def clean_data(train_data):
     #test_data = test_data.strip( '#' ,'!','-','_','%')
     #print( len( test_data[ 'labels' ] ) , len( test_data[ 'objects' ] ) )
-    unfiltered_data = test_data[ 'objects' ]
-    for i in range( len( unfiltered_data ) ) :
+    unfiltered_data = train_data['objects']
+    for i in range(len(unfiltered_data)):
         unfiltered_data[ i ] = unfiltered_data[ i ].replace( '#' , '' )
         unfiltered_data[ i ] = unfiltered_data[ i ].replace( '!' , '' )
         unfiltered_data[ i ] = unfiltered_data[ i ].replace( '@' , '' )
@@ -50,33 +50,49 @@ def clean_data(train_data,test_data):
         unfiltered_data[i]=unfiltered_data[i].replace('-','')
         unfiltered_data[i]=unfiltered_data[i].replace('--------','')
         # print( unfiltered_data)
-        
-stop_words = set(stopwords.words('english'))
-# Open and read in a text file.
-txt_file = open("tweets.location.test.txt")
-txt_line = txt_file.read()
-txt_words = txt_line.split()
- 
-# stopwords found counter.
-sw_found = 0
- 
-# If each word checked is not in stopwords list,
-# then append word to a new text file.
-for check_word in txt_words:
-    if not check_word.lower() in stop_words:
-        # Not found on stopword list, so append.
-        appendFile = open('stopwords-removed.txt','a')
-        appendFile.write(" "+check_word)
-        appendFile.close()
-    else:
-        # It's on the stopword list
-        sw_found +=1
-#         print(check_word)
- 
-# print(sw_found,"stop words found and removed")
-# print("Saved as 'stopwords-removed.txt' ")
+        train_data['objects'][i] = unfiltered_data[i]
+    unfiltered_data_test = test_data['objects']
+    for i in range(len(unfiltered_data_test)):
+        unfiltered_data_test[i] = unfiltered_data_test[i].replace('#', '')
+        unfiltered_data_test[i] = unfiltered_data_test[i].replace('!', '')
+        unfiltered_data_test[i] = unfiltered_data_test[i].replace('@', '')
+        unfiltered_data_test[i] = unfiltered_data_test[i].replace('$', '')
+        unfiltered_data_test[i] = unfiltered_data_test[i].replace('%', '')
+        unfiltered_data_test[i] = unfiltered_data_test[i].replace('.', '')
 
-    
+        unfiltered_data_test[i] = unfiltered_data_test[i].replace('-', '')
+        unfiltered_data_test[i] = unfiltered_data_test[i].replace(':', '')
+        unfiltered_data_test[i] = unfiltered_data_test[i].replace('-', '')
+        unfiltered_data_test[i] = unfiltered_data_test[i].replace('--------', '')
+        test_data['objects'][i] = unfiltered_data_test[i]
+        # print( unfiltered_data)
+    return train_data, test_data
+
+# # Open and read in a text file.
+# txt_file = open("tweets.location.test.txt")
+# txt_line = txt_file.read()
+# txt_words = txt_line.split()
+#
+# # stopwords found counter.
+# sw_found = 0
+#
+# # If each word checked is not in stopwords list,
+# # then append word to a new text file.
+# for check_word in txt_words:
+#     if not check_word.lower() in stop_words:
+#         # Not found on stopword list, so append.
+#         appendFile = open('stopwords-removed.txt','a')
+#         appendFile.write(" "+check_word)
+#         appendFile.close()
+#     else:
+#         # It's on the stopword list
+#         sw_found +=1
+# #         print(check_word)
+#
+# # print(sw_found,"stop words found and removed")
+# # print("Saved as 'stopwords-removed.txt' ")
+#
+#
    
     
         
@@ -119,17 +135,20 @@ def map_generator(train_data):
 def probability(test_data, train_data, east_coast, west_coast):
     for i in range(len(test_data['objects'])):
         test_data['objects'][i] = test_data['objects'][i].split()
+        # east_coast = {k: v for k, v in east_coast.items() if v > 1}
+        # west_coast = {k: v for k, v in west_coast.items() if v > 1}
+        alpha = 1
         ec = 1
         wc = 1
         for elem in test_data['objects'][i]:
             if elem in east_coast:
-                ec *= ((east_coast[elem]/sum(east_coast.values()))+(1/len(east_coast.keys())))
+                ec *= (east_coast[elem]+alpha)/(sum(east_coast.values())+alpha*len(east_coast.keys()))
             else:
-                ec *= 1 / (sum(east_coast.values())+len(east_coast.keys()))
+                ec *= 1 / (sum(east_coast.values())+alpha*len(east_coast.keys()))
             if elem in west_coast:
-                wc *= ((west_coast[elem]/sum(west_coast.values()))+(1/len(west_coast.keys())))
+                wc *= (west_coast[elem]+alpha)/(sum(west_coast.values())+alpha*len(west_coast.keys()))
             else:
-                wc *= 1 / (sum(west_coast.values())+len(west_coast.keys()))
+                wc *= 1 / (sum(west_coast.values())+alpha*len(west_coast.keys()))
 
         ECWC_count = Counter(train_data["labels"])
 
@@ -152,6 +171,12 @@ def probability(test_data, train_data, east_coast, west_coast):
 def classifier(train_data, test_data):
     # This is just dummy code -- put yours here!
     # clean_data(train_data, test_data)
+
+
+    train_data, test_data = clean_data(train_data)
+    stop_words = set(stopwords.words('english'))
+    # for i in train_data['objects']:
+    #     i = [word for word in i if word not in stop_words]
     map_generator(train_data)
     probability(test_data, train_data, east_coast, west_coast)
     return test_Labels
