@@ -44,7 +44,7 @@ def Minimax(CurrentState, level, player, visitedstates, recursiondepth, alpha, b
     elif player == 'b' and len(CurrentState.b_pieces) == 0:
         visitedstates.append((-10*EvaluateState(CurrentState, player), CurrentState))
         return -10*EvaluateState(CurrentState, player), alpha, beta
-    elif player == 'b' and len(CurrentState.b_pieces) == 0:
+    elif player == 'b' and len(CurrentState.w_pieces) == 0:
         visitedstates.append((10*EvaluateState(CurrentState, player), CurrentState))
         return 10*EvaluateState(CurrentState, player), alpha, beta
         ''' Min code block - checks if the state passed to it is already checked, otherwise checks the next states of passed
@@ -99,27 +99,23 @@ def EvaluateState(State, player):
     strength_b = 0
 
     for w in State.w_pieces:
-        strength_w += int(len(State.board)/2) if type(w) is Pikachu else 1
+        strength_w += len(State.board) / 2 if type(w) is Pikachu else 1
     for w in State.w_pieces:
-        if w.position[0] > 0 and type(w) is pichu and State.board[w.position[0]-1][w.position[1]] == 'w':
+        if w.position[0] > 0 and type(w) is pichu and State.board[w.position[0] - 1][w.position[1]] == 'w':
             strength_w += 1
 
     for b in State.b_pieces:
-        strength_b += int(len(State.board)/2) if type(b) is Pikachu else 1
-    for b in State.w_pieces:
-        if b.position[0] < len(State.board) and type(b) is pichu and State.board[b.position[0]+1][b.position[1]] == 'b':
+        strength_b += len(State.board) / 2 if type(b) is Pikachu else 1
+    for b in State.b_pieces:
+        if b.position[0] < len(State.board)-1 and type(b) is pichu and State.board[b.position[0] + 1][b.position[1]] == 'b':
             strength_b += 1
     if player == 'b':
-        return len(State.b_pieces) + (
-                sum([b.position[0] for b in State.b_pieces])) \
-             - (len(State.w_pieces)
-             + sum([w.position[0] for w in State.w_pieces]))
-
-    else:
-        return len(State.w_pieces) + (
-                sum([w.position[0] for w in State.w_pieces])) \
-             - (len(State.b_pieces)
-             + sum([b.position[0] for b in State.b_pieces]))
+            return len(State.b_pieces) + 0.1*strength_b + 0.1*sum([len(State.board) - b.position[0] for b in State.b_pieces]) \
+               - (len(State.w_pieces) + 0.1*strength_w
+                  + 0.01*sum([w.position[0] for w in State.w_pieces]))
+    return len(State.w_pieces) + 0.01*strength_w  + 0.01*sum([w.position[0] for w in State.w_pieces]) \
+           - (len(State.b_pieces) + 0.01*strength_b
+              + 0.01*sum([len(State.board) - b.position[0] for b in State.b_pieces]))
 
 
 class Move:
@@ -603,11 +599,15 @@ def find_best_move(board, N, player, timelimit):
     moves = []
     alpha = -math.inf
     beta = math.inf
-    for next_move in current_state.GetNextMoves(player):
-        move, alpha, beta = Minimax(next_move, 'Max', player, visited_states, recursiondepth, alpha, beta)
-        moves.append((move, next_move))
-    best_move = max(moves, key=lambda t:t[0])
-    # # start = time.time()
+    while True:
+        for next_move in current_state.GetNextMoves(player):
+            move, alpha, beta = Minimax(next_move, 'Max', player, visited_states, recursiondepth, alpha, beta)
+            moves.append((move, next_move))
+        best_move = max(moves, key=lambda t:t[0])
+        moves = []
+        current_state = best_move[1]
+        player = 'b' if player == 'w' else 'w'
+        # # start = time.time()
     # boards = current_state.GetNextMoves(player)
     # # print(time.time() - start)
     # # current_state = boards[0]
@@ -616,10 +616,10 @@ def find_best_move(board, N, player, timelimit):
     #     boards = sorted(boards,key=lambda t:EvaluateState(t, player))
     # else:
     #     boards = sorted(boards, key=lambda t:EvaluateState(t, player))
-    board_string = ConvertBoardTo1d(best_move[1].board, N)
-    board_string = "".join(str(i) for i in board_string)
-    # yield board_to_string(board_string, N)
-    yield board_string
+        board_string = ConvertBoardTo1d(best_move[1].board, N)
+        board_string = "".join(str(i) for i in board_string)
+        yield board_to_string(board_string, N)
+        # yield board_string
 
 
 if __name__ == "__main__":
@@ -637,7 +637,8 @@ if __name__ == "__main__":
 
     print("Searching for best move for " + player + " from board state: \n" + board_to_string(board, N))
     print("Here's what I decided:")
-    # start = time.time()
+    start = time.time()
     for new_board in find_best_move(board, N, player, timelimit):
         print(new_board)
-        # print(time.time() - start)
+        print(time.time() - start)
+        start = time.time()
