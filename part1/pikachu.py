@@ -32,7 +32,7 @@ def Minimax(CurrentState, level, player, visitedstates, recursiondepth, alpha, b
      then returned value is evaluation of the leaf node, max code block returns a tuple with 1st element having maximum value and 2nd element is the calling state, similarly min returns 1st element haing min state
       and its calling state
     '''
-    if recursiondepth == 3:
+    if recursiondepth == 2:
         return EvaluateState(CurrentState, player), alpha, beta
     # append to visited state to reuse later, since this State subtree has been computed
     if player == 'w' and len(CurrentState.w_pieces) == 0:
@@ -612,19 +612,11 @@ def find_best_move(board, N, player, timelimit):
     moves = []
     alpha = -math.inf
     beta = math.inf
+    # check which of the next states is the best move to make
     for next_move in current_state.GetNextMoves(player):
         move, alpha, beta = Minimax(next_move, 'Max', player, visited_states, recursiondepth, alpha, beta)
         moves.append((move, next_move))
     best_move = max(moves, key=lambda t:t[0])
-    # # start = time.time()
-    # boards = current_state.GetNextMoves(player)
-    # # print(time.time() - start)
-    # # current_state = boards[0]
-    #
-    # if player =='w':
-    #     boards = sorted(boards,key=lambda t:EvaluateState(t, player))
-    # else:
-    #     boards = sorted(boards, key=lambda t:EvaluateState(t, player))
     board_string = ConvertBoardTo1d(best_move[1].board, N)
     board_string = "".join(str(i) for i in board_string)
     # yield board_to_string(board_string, N)
