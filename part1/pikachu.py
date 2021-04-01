@@ -32,7 +32,7 @@ def Minimax(CurrentState, level, player, visitedstates, recursiondepth, alpha, b
      then returned value is evaluation of the leaf node, max code block returns a tuple with 1st element having maximum value and 2nd element is the calling state, similarly min returns 1st element haing min state
       and its calling state
     '''
-    if recursiondepth == 2:
+    if recursiondepth == 3:
         return EvaluateState(CurrentState, player), alpha, beta
     # append to visited state to reuse later, since this State subtree has been computed
     if player == 'w' and len(CurrentState.w_pieces) == 0:
@@ -122,12 +122,12 @@ def EvaluateState(State, player):
 
     if player == 'b':
         return len(State.b_pieces) - len(State.w_pieces) + 0.01 * (strength_b - strength_w) + 0.02 * sum(
-            [abs(((len(State.board[0]) - 1) / 2) - b.position[1]) for b in State.b_pieces]) + 0.05 * sum(
+            [abs(((len(State.board[0]) - 1) / 2) - b.position[1]) for b in State.b_pieces]) + 0.02 * sum(
             [len(State.board) - 1 - b.position[0] for b in State.b_pieces])
 
     else:
         return len(State.w_pieces) - len(State.b_pieces) + 0.01 * (strength_w - strength_b) + 0.02 * sum(
-            [abs(((len(State.board[0]) - 1) / 2) - w.position[1]) for w in State.w_pieces]) + 0.05 * sum(
+            [abs(((len(State.board[0]) - 1) / 2) - w.position[1]) for w in State.w_pieces]) + 0.02 * sum(
             [w.position[0] for w in State.w_pieces])
 
 
