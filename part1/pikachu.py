@@ -13,7 +13,7 @@ import copy
 
 
 def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
-    if recursiondepth == 2:
+    if recursiondepth == 3:
         return EvaluateState(CurrentState, player), CurrentState
     if player == 'w' and len(CurrentState.w_pieces) == 0:
         visitedstates.append((-10*EvaluateState(CurrentState, player), CurrentState))
@@ -29,9 +29,9 @@ def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
         return 10*EvaluateState(CurrentState, player), CurrentState
 
     if level == 'Min':
-        for item in visitedstates:
-            if CurrentState == item[1]:
-                return item[0], item[1]
+        # for item in visitedstates:
+        #     if CurrentState == item[1]:
+        #         return item[0], item[1]
         next_States = CurrentState.GetNextMoves('b' if player=='w' else 'w')
         min_value = None
         for state in next_States:
@@ -43,9 +43,9 @@ def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
         return min_value[0], min_value[1]
 
     elif level == 'Max':
-        for item in visitedstates:
-            if CurrentState == item[1]:
-                return item[0], item[1]
+        # for item in visitedstates:
+        #     if CurrentState == item[1]:
+        #         return item[0], item[1]
         next_States = CurrentState.GetNextMoves(player)
         max_value = None
         for state in next_States:
@@ -558,8 +558,8 @@ def find_best_move(board, N, player, timelimit):
     #     boards = sorted(boards, key=lambda t:EvaluateState(t, player))
     board_string = ConvertBoardTo1d(best_move[1].board, N)
     board_string = "".join(str(i) for i in board_string)
-    # yield board_to_string(board_string, N)
-    yield board_string
+    yield board_to_string(board_string, N)
+    # yield board_string
 
 
 if __name__ == "__main__":
@@ -580,3 +580,4 @@ if __name__ == "__main__":
     # start = time.time()
     for new_board in find_best_move(board, N, player, timelimit):
         print(new_board)
+        # print(time.time() - start)
