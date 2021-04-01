@@ -117,10 +117,10 @@ def EvaluateState(State, player):
             strength_w += 1
 
     if player == 'b':
-        return len(State.b_pieces) - len(State.w_pieces) + 0.1*(strength_b - strength_w) + 0.1*(abs(sum([len(State.board[0]-1)/2 - w.position[1] for w in State.w_pieces])))
+        return len(State.b_pieces) - len(State.w_pieces) + 0.01*(strength_b - strength_w) + 0.05*sum([abs(len(State.board[0]-1)/2 - w.position[1]) for w in State.w_pieces])
 
     else:
-        return len(State.w_pieces) - len(State.b_pieces) + 0.1*(strength_w - strength_b) + 0.1*(abs(sum([len(State.board[0]-1)/2 - w.position[1] for w in State.w_pieces])))
+        return len(State.w_pieces) - len(State.b_pieces) + 0.01*(strength_w - strength_b) + 0.05*sum([abs(len(State.board[0]-1)/2 - w.position[1]) for w in State.w_pieces])
 
 
 class Move:
