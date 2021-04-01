@@ -132,13 +132,13 @@ def EvaluateState(State, player):
             strength_b += 1
 
     if player == 'b':
-        return len(State.b_pieces) - len(State.w_pieces)  + 0.01*(strength_b - strength_w) + \
+        return len(State.b_pieces) - len(State.w_pieces) + 0.01*(strength_b) + \
                0.01 * sum(
             [abs(((len(State.board[0]) - 1) / 2) - b.position[1]) for b in State.b_pieces]) + 0.01 * sum(
             [len(State.board) - 1 - b.position[0] for b in State.b_pieces])
 
     else:
-        return len(State.w_pieces) - len(State.b_pieces) + 0.01*(strength_w - strength_b) \
+        return len(State.w_pieces) - len(State.b_pieces) + 0.01*(strength_w) \
                 + 0.01 * sum(
             [abs(((len(State.board[0]) - 1) / 2) - w.position[1]) for w in State.w_pieces]) + 0.01 * sum(
             [w.position[0] for w in State.w_pieces])
