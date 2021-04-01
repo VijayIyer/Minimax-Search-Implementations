@@ -61,7 +61,7 @@ def Minimax(CurrentState, level, player, visitedstates, recursiondepth, alpha, b
         min_value = math.inf
 
         for state in next_States:
-            bestnode_State, alpha, beta = Minimax(state, 'Max', player, visitedstates, recursiondepth, alpha,beta)
+            bestnode_State, alpha, beta = Minimax(state, 'Max', player, visitedstates, recursiondepth+1, alpha,beta)
             min_value = min([min_value, bestnode_State])
             if min_value < alpha:
                 return min_value, alpha, beta
