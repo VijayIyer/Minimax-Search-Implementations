@@ -11,8 +11,9 @@ import sys
 import time
 import numpy as np
 import copy
+import math
 
-def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
+def Minimax(CurrentState, level, player, visitedstates, recursiondepth, alpha, beta):
     '''
     :param CurrentState: The current state of the game - 1. the board as a 2d list with characters in positions after
     moves in the game 2. the list of white's and black's pieces represented by pichu or Pikachu class Objects - objects contain
@@ -32,59 +33,60 @@ def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
       and its calling state
     '''
     if recursiondepth == 3:
-        return EvaluateState(CurrentState, player), CurrentState
+        return EvaluateState(CurrentState, player), alpha, beta
     # append to visited state to reuse later, since this State subtree has been computed
     if player == 'w' and len(CurrentState.w_pieces) == 0:
         visitedstates.append((-10*EvaluateState(CurrentState, player), CurrentState))
-        return -10*EvaluateState(CurrentState, player), CurrentState
+        return -10*EvaluateState(CurrentState, player), alpha, beta
     elif player == 'w' and len(CurrentState.b_pieces) == 0:
         visitedstates.append((10*EvaluateState(CurrentState, player), CurrentState))
-        return 10*EvaluateState(CurrentState, player), CurrentState
+        return 10*EvaluateState(CurrentState, player), alpha, beta
     elif player == 'b' and len(CurrentState.b_pieces) == 0:
         visitedstates.append((-10*EvaluateState(CurrentState, player), CurrentState))
-        return -10*EvaluateState(CurrentState, player), CurrentState
+        return -10*EvaluateState(CurrentState, player), alpha, beta
     elif player == 'b' and len(CurrentState.b_pieces) == 0:
         visitedstates.append((10*EvaluateState(CurrentState, player), CurrentState))
-        return 10*EvaluateState(CurrentState, player), CurrentState
+        return 10*EvaluateState(CurrentState, player), alpha, beta
         ''' Min code block - checks if the state passed to it is already checked, otherwise checks the next states of passed
         state and returns the min value of those states.
         '''
     if level == 'Min':
         for item in visitedstates:
             if CurrentState == item[1]:
-                return item[0], item[1]
+                return item[0], alpha, beta
         # Get all the next states of the passed state, then compute the min of those
         # states by passing each of them in turn to minimax
         # function
         next_States = CurrentState.GetNextMoves('b' if player=='w' else 'w')
-        min_value = None
+        min_value = math.inf
 
         for state in next_States:
-            bestnode_State = Minimax(state, 'Max', player, visitedstates, recursiondepth+1)
-            if min_value is None:
-                min_value = (bestnode_State[0], state)
-            else:
-                min_value = min([min_value, (bestnode_State[0], state)], key=lambda t: t[0])
-        return min_value[0], min_value[1]
+            bestnode_State, alpha, beta = Minimax(state, 'Max', player, visitedstates, recursiondepth+1, alpha,beta)
+            min_value = min([min_value, bestnode_State])
+            if min_value < alpha:
+                return min_value, alpha, beta
+            beta = min([beta, min_value])
+
+        return min_value, alpha, beta
         ''' Max code block - checks if the state passed to it is already checked, otherwise checks the next states of passed
         state and returns the max value of those states.
         '''
     elif level == 'Max':
         for item in visitedstates:
             if CurrentState == item[1]:
-                return item[0], item[1]
+                return item[0], alpha, beta
         # Get all the next states of the passed state, then compute the max of those states by passing
         # each of them
         # in turn to minimax function
         next_States = CurrentState.GetNextMoves(player)
-        max_value = None
+        max_value = -math.inf
         for state in next_States:
-            bestnode_State = Minimax(state, 'Min', player, visitedstates, recursiondepth + 1)
-            if max_value is None:
-                max_value = (bestnode_State[0], state)
-            else:
-                max_value = max([max_value, (bestnode_State[0], state)], key=lambda t:t[0])
-        return max_value[0],max_value[1]
+            bestnode_State, alpha, beta = Minimax(state, 'Min', player, visitedstates, recursiondepth + 1, alpha, beta)
+            max_value = max([max_value, bestnode_State])
+            if max_value > beta:
+                return max_value, alpha, beta
+            alpha = max([alpha, max_value])
+        return max_value, alpha, beta
 
 
 def EvaluateState(State, player):
@@ -97,30 +99,36 @@ def EvaluateState(State, player):
     strength_b = 0
 
     for w in State.w_pieces:
-        strength_w += int(len(State.board)/2) if type(w) is Pikachu else 1
+        strength_w += int(len(State.board) / 2) if type(w) is Pikachu else 1
     for w in State.w_pieces:
-        if w.position[0] > 0 and type(w) is pichu and State.board[w.position[0]-1][w.position[1]] == 'w':
+        if w.position[0] > 0 and type(w) is pichu and State.board[w.position[0] - 1][w.position[1]] == 'w':
             strength_w += 1
-        if w.position[1] < len(State.board[1])-1 and type(w) is pichu and State.board[w.position[0]][w.position[1]+1] =='w':
+        if w.position[1] < len(State.board[1]) - 1 and type(w) is pichu and State.board[w.position[0]][
+            w.position[1] + 1] == 'w':
             strength_w += 1
-        if w.position[1] > 0 and type(w) is pichu and State.board[w.position[0]][w.position[1]-1] =='w':
+        if w.position[1] > 0 and type(w) is pichu and State.board[w.position[0]][w.position[1] - 1] == 'w':
             strength_w += 1
 
     for b in State.b_pieces:
-        strength_b += int(len(State.board)/2) if type(b) is Pikachu else 1
+        strength_b += int(len(State.board) / 2) if type(b) is Pikachu else 1
     for b in State.w_pieces:
-        if b.position[0] < len(State.board)-1 and type(b) is pichu and State.board[b.position[0]+1][b.position[1]] == 'b':
+        if b.position[0] < len(State.board) - 1 and type(b) is pichu and State.board[b.position[0] + 1][b.position[1]] == 'b':
             strength_b += 1
-        if b.position[1] < len(State.board[0])-1 and type(b) is pichu and State.board[b.position[0]][b.position[1]-1] == 'b':
+        if b.position[1] < len(State.board[0]) - 1 and type(b) is pichu and State.board[b.position[0]][
+            b.position[1] - 1] == 'b':
             strength_b += 1
-        if b.position[1] > 0 and type(b) is pichu and State.board[b.position[0]][b.position[1]-1] =='b':
+        if b.position[1] > 0 and type(b) is pichu and State.board[b.position[0]][b.position[1] - 1] == 'b':
             strength_w += 1
 
     if player == 'b':
-        return len(State.b_pieces) - len(State.w_pieces) + 0.01*(strength_b - strength_w) + 0.02*sum([abs(((len(State.board[0])-1)/2) - b.position[1]) for b in State.b_pieces])+ 0.1*sum([len(State.board)-1 - b.position[0] for b in State.b_pieces])
+        return len(State.b_pieces) - len(State.w_pieces) + 0.01 * (strength_b - strength_w) + 0.02 * sum(
+            [abs(((len(State.board[0]) - 1) / 2) - b.position[1]) for b in State.b_pieces]) + 0.1 * sum(
+            [len(State.board) - 1 - b.position[0] for b in State.b_pieces])
 
     else:
-        return len(State.w_pieces) - len(State.b_pieces) + 0.01*(strength_w - strength_b) + 0.02*sum([abs(((len(State.board[0])-1)/2) - w.position[1]) for w in State.w_pieces])+ 0.1 * sum([w.position[0] for w in State.w_pieces])
+        return len(State.w_pieces) - len(State.b_pieces) + 0.01 * (strength_w - strength_b) + 0.02 * sum(
+            [abs(((len(State.board[0]) - 1) / 2) - w.position[1]) for w in State.w_pieces]) + 0.1 * sum(
+            [w.position[0] for w in State.w_pieces])
 
 
 class Move:
@@ -601,8 +609,13 @@ def find_best_move(board, N, player, timelimit):
     current_state = State(board_2d, w_pieces, b_pieces)
     visited_states = []
     recursiondepth = 0
-    best_move = Minimax(current_state, 'Max', player, visited_states, recursiondepth)
-
+    moves = []
+    alpha = -math.inf
+    beta = math.inf
+    for next_move in current_state.GetNextMoves(player):
+        move, alpha, beta = Minimax(next_move, 'Max', player, visited_states, recursiondepth, alpha, beta)
+        moves.append((move, next_move))
+    best_move = max(moves, key=lambda t:t[0])
     # # start = time.time()
     # boards = current_state.GetNextMoves(player)
     # # print(time.time() - start)
