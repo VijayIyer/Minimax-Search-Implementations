@@ -51,9 +51,9 @@ def Minimax(CurrentState, level, player, visitedstates, recursiondepth, alpha, b
         state and returns the min value of those states.
         '''
     if level == 'Min':
-        for item in visitedstates:
-            if CurrentState == item[1]:
-                return item[0], alpha, beta
+        # for item in visitedstates:
+        #     if CurrentState == item[1]:
+        #         return item[0], alpha, beta
         # Get all the next states of the passed state, then compute the min of those
         # states by passing each of them in turn to minimax
         # function
@@ -72,9 +72,9 @@ def Minimax(CurrentState, level, player, visitedstates, recursiondepth, alpha, b
         state and returns the max value of those states.
         '''
     elif level == 'Max':
-        for item in visitedstates:
-            if CurrentState == item[1]:
-                return item[0], alpha, beta
+        # for item in visitedstates:
+        #     if CurrentState == item[1]:
+        #         return item[0], alpha, beta
         # Get all the next states of the passed state, then compute the max of those states by passing
         # each of them
         # in turn to minimax function
@@ -122,12 +122,12 @@ def EvaluateState(State, player):
 
     if player == 'b':
         return len(State.b_pieces) - len(State.w_pieces) + 0.01 * (strength_b - strength_w) + 0.02 * sum(
-            [abs(((len(State.board[0]) - 1) / 2) - b.position[1]) for b in State.b_pieces]) + 0.1 * sum(
+            [abs(((len(State.board[0]) - 1) / 2) - b.position[1]) for b in State.b_pieces]) + 0.05 * sum(
             [len(State.board) - 1 - b.position[0] for b in State.b_pieces])
 
     else:
         return len(State.w_pieces) - len(State.b_pieces) + 0.01 * (strength_w - strength_b) + 0.02 * sum(
-            [abs(((len(State.board[0]) - 1) / 2) - w.position[1]) for w in State.w_pieces]) + 0.1 * sum(
+            [abs(((len(State.board[0]) - 1) / 2) - w.position[1]) for w in State.w_pieces]) + 0.05 * sum(
             [w.position[0] for w in State.w_pieces])
 
 
