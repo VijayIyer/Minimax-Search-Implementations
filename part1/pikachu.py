@@ -101,17 +101,27 @@ def EvaluateState(State, player):
     for w in State.w_pieces:
         if w.position[0] > 0 and type(w) is pichu and State.board[w.position[0]-1][w.position[1]] == 'w':
             strength_w += 1
+        if w.position[1] < len(State.board[1])-1 and type(w) is pichu and State.board[w.position[0]][w.position[1]+1] =='w':
+            strength_w += 1
+        if w.position[1] > 0 and type(w) is pichu and State.board[w.position[0]][w.position[1]-1] =='w':
+            strength_w += 1
 
     for b in State.b_pieces:
         strength_b += int(len(State.board)/2) if type(b) is Pikachu else 1
     for b in State.w_pieces:
-        if b.position[0] < len(State.board) and type(b) is pichu and State.board[b.position[0]+1][b.position[1]] == 'b':
+        if b.position[0] < len(State.board)-1 and type(b) is pichu and State.board[b.position[0]+1][b.position[1]] == 'b':
             strength_b += 1
+        if b.position[1] < len(State.board[0])-1 and type(b) is pichu and State.board[b.position[0]][b.position[1]-1] == 'b':
+            strength_b += 1
+        if b.position[1] > 0 and type(b) is pichu and State.board[b.position[0]][b.position[1]-1] =='b':
+            strength_w += 1
+
+
     if player == 'b':
-        return len(State.b_pieces) - len(State.w_pieces) + strength_b - strength_w
+        return len(State.b_pieces) - len(State.w_pieces) + 0.1*(strength_b - strength_w)
 
     else:
-        return len(State.w_pieces) - len(State.b_pieces) + strength_w - strength_b
+        return len(State.w_pieces) - len(State.b_pieces) + 0.1(strength_w - strength_b)
 
 
 class Move:
