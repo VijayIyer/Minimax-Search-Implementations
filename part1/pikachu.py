@@ -121,7 +121,7 @@ def EvaluateState(State, player):
         return len(State.b_pieces) - len(State.w_pieces) + 0.1*(strength_b - strength_w)
 
     else:
-        return len(State.w_pieces) - len(State.b_pieces) + 0.1(strength_w - strength_b)
+        return len(State.w_pieces) - len(State.b_pieces) + 0.1*(strength_w - strength_b)
 
 
 class Move:
