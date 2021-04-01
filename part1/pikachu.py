@@ -1,7 +1,8 @@
 #
 # pikachu.py : Play the game of Pikachu
-#
-# PLEASE PUT YOUR NAMES AND USER IDS HERE!
+# shmoham@iu.edu
+# spanampi@iu.edu
+# vsiyer@iu.edu
 #
 # Based on skeleton code by D. Crandall, March 2021
 #
@@ -11,10 +12,28 @@ import time
 import numpy as np
 import copy
 
-
 def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
-    if recursiondepth == 3:
+    '''
+    :param CurrentState: The current state of the game - 1. the board as a 2d list with characters in positions after
+    moves in the game 2. the list of white's and black's pieces represented by pichu or Pikachu class Objects - objects contain
+      attributes position ,color, character
+      like
+    :param level: whether the intended call is for min or max
+    :param player: whether the player is min or max  - in our case if original player was w, then on call to min, the player
+     is b, then w for max alternatively
+    :param visitedstates: in case of repeated moves, we will store a the state and its value in a list, and return this
+    value as soon as the same state is encountered
+    :param recursiondepth: value to keep track of which level we are in the game tree, at certain level, we will directly return
+    a value of the board state, computed using the evaluation function, instead of looking for the terminal state, which is either player having all
+     pieces captured
+    :return: a tuple consisting 1. a value which is output by the evaluation function after looking at the board State and
+    attributes of the pieces such that chances of winning the game are maximized 2. a State object which is the calling function for that evaluation - if leaf node/ max depth level,
+     then returned value is evaluation of the leaf node, max code block returns a tuple with 1st element having maximum value and 2nd element is the calling state, similarly min returns 1st element haing min state
+      and its calling state
+    '''
+    if recursiondepth == 2:
         return EvaluateState(CurrentState, player), CurrentState
+    # append to visited state to reuse later, since this State subtree has been computed
     if player == 'w' and len(CurrentState.w_pieces) == 0:
         visitedstates.append((-10*EvaluateState(CurrentState, player), CurrentState))
         return -10*EvaluateState(CurrentState, player), CurrentState
@@ -27,67 +46,83 @@ def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
     elif player == 'b' and len(CurrentState.b_pieces) == 0:
         visitedstates.append((10*EvaluateState(CurrentState, player), CurrentState))
         return 10*EvaluateState(CurrentState, player), CurrentState
-
+        ''' Min code block - checks if the state passed to it is already checked, otherwise checks the next states of passed
+        state and returns the min value of those states.
+        '''
     if level == 'Min':
-        # for item in visitedstates:
-        #     if CurrentState == item[1]:
-        #         return item[0], item[1]
+        for item in visitedstates:
+            if CurrentState == item[1]:
+                return item[0], item[1]
+        # Get all the next states of the passed state, then compute the min of those
+        # states by passing each of them in turn to minimax
+        # function
         next_States = CurrentState.GetNextMoves('b' if player=='w' else 'w')
         min_value = None
+
         for state in next_States:
-            bestnode_State = Minimax(state, 'Max', 'b' if player == 'w' else 'w', visitedstates, recursiondepth+1)
+            bestnode_State = Minimax(state, 'Max', player, visitedstates, recursiondepth+1)
             if min_value is None:
-                min_value = bestnode_State[0], state
+                min_value = (bestnode_State[0], state)
             else:
                 min_value = min([min_value, (bestnode_State[0], state)], key=lambda t: t[0])
         return min_value[0], min_value[1]
-
+        ''' Max code block - checks if the state passed to it is already checked, otherwise checks the next states of passed
+        state and returns the max value of those states.
+        '''
     elif level == 'Max':
-        # for item in visitedstates:
-        #     if CurrentState == item[1]:
-        #         return item[0], item[1]
+        for item in visitedstates:
+            if CurrentState == item[1]:
+                return item[0], item[1]
+        # Get all the next states of the passed state, then compute the max of those states by passing
+        # each of them
+        # in turn to minimax function
         next_States = CurrentState.GetNextMoves(player)
         max_value = None
         for state in next_States:
             bestnode_State = Minimax(state, 'Min', player, visitedstates, recursiondepth + 1)
             if max_value is None:
-                max_value = EvaluateState(bestnode_State[1], player), state
+                max_value = (bestnode_State[0], state)
             else:
-                max_value = max([max_value, (EvaluateState(bestnode_State[1], player), state)], key=lambda t:t[0])
+                max_value = max([max_value, (bestnode_State[0], state)], key=lambda t:t[0])
         return max_value[0],max_value[1]
 
 
 def EvaluateState(State, player):
+    '''
+    :param State: State Representing the board and the pieces on it
+    :param player: whether current player is w or b
+    :return: single value which represents the strength of the position for the player calling the function
+    '''
     strength_w = 0
     strength_b = 0
 
     for w in State.w_pieces:
-        strength_w += len(State.board)/2 if type(w) is Pikachu else 1
+        strength_w += int(len(State.board)/2) if type(w) is Pikachu else 1
     for w in State.w_pieces:
         if w.position[0] > 0 and type(w) is pichu and State.board[w.position[0]-1][w.position[1]] == 'w':
             strength_w += 1
 
     for b in State.b_pieces:
-        strength_b += len(State.board)/2 if type(b) is Pikachu else 1
+        strength_b += int(len(State.board)/2) if type(b) is Pikachu else 1
     for b in State.w_pieces:
         if b.position[0] < len(State.board) and type(b) is pichu and State.board[b.position[0]+1][b.position[1]] == 'b':
             strength_b += 1
     if player == 'b':
         return len(State.b_pieces) + (
-                sum([b.position[0] for b in State.b_pieces]) / len(State.b_pieces)) \
+                sum([b.position[0] for b in State.b_pieces])) \
              - (len(State.w_pieces)
-             + sum([w.position[0] for w in State.w_pieces]) / len(State.w_pieces))
+             + sum([w.position[0] for w in State.w_pieces]))
 
     else:
         return len(State.w_pieces) + (
-                sum([w.position[0] for w in State.w_pieces]) / len(State.w_pieces)) \
+                sum([w.position[0] for w in State.w_pieces])) \
              - (len(State.b_pieces)
-             + sum([b.position[0] for b in State.b_pieces]) / len(State.b_pieces))
+             + sum([b.position[0] for b in State.b_pieces]))
+
 
 class Move:
     def __init__(self, previous, current, captures):
         '''
-
         :param previous: the previous index of piece which has moved
         :param current: current index of piece which has moved
         :param captures: index of piece which got captured
@@ -186,6 +221,9 @@ class State:
 
 
 class pichu:
+    '''
+    Represents an object which is a piece on the board with its color, position(row, column), character with which to represent on he board
+    '''
     def __init__(self, color, position, character):
         self.color = color
         self.captured = False
@@ -193,6 +231,12 @@ class pichu:
         self.character = character
 
     def findvalidmoves(self, b):
+        '''
+
+        :param b: the board State, passed to know the other pieces on the board so that
+        the correct valid moves for this piece can be returned
+        :return: list of (row, column) values to which piece can move
+        '''
         validmoves = ['left', 'right']
         if self.color == 'w':
             validmoves.append('forward')
@@ -288,6 +332,9 @@ class pichu:
 
 
 class Pikachu:
+    '''
+    Represents a Pikachu piece, with color, position(row, column), character to represent on the board
+    '''
     def __init__(self, color, position, character):
         self.color = color
         self.captured = False
@@ -309,6 +356,11 @@ class Pikachu:
         return self.GetValidPositions(validmoves, b)
 
     def GetValidPositions(self, validmoves, b):
+        '''
+        :param validmoves: given the boards current piece, which are the valid directions it can move, e.g., if its at a corner, some moves are restricted
+        :param b: the board state to help get the positions which are empty and can be moved to
+        :return: a list of (row, column values) to which this Pikachu object can move to. computed by calling 4 different methods to check possible moves in all directions
+        '''
         validMoves = []
         if 'forward' in validmoves:
             validMoves.extend([move for move in self.WalkForward(self.position, b)])
@@ -351,7 +403,6 @@ class Pikachu:
                     current += 1
         return moves
 
-
     def WalkRight(self, position, b):
         moves = []
         jumpedpiece = []
@@ -383,7 +434,6 @@ class Pikachu:
                     current += 1
         return moves
 
-
     def WalkLeft(self, position, b):
         moves = []
         jumpedpiece = []
@@ -413,8 +463,6 @@ class Pikachu:
                     moves.append(Move(self.position, [position[0], current], jumpedpiece))
                     current -= 1
         return moves
-
-
     def WalkBack(self, position, b):
         moves = []
         jumpedpiece = []
@@ -451,6 +499,11 @@ def board_to_string(board, N):
 
 
 def GetPieces(board, N):
+    '''
+    :param board: takes a board 2d list with all the characters as input in the arguments
+    :param N: the dimensions of the board
+    :return: for all w and b characters, return a list of pichu/Pikachu objects for both colors.
+    '''
     w_pieces = []
     b_pieces = []
     for i in range(N):
@@ -558,8 +611,8 @@ def find_best_move(board, N, player, timelimit):
     #     boards = sorted(boards, key=lambda t:EvaluateState(t, player))
     board_string = ConvertBoardTo1d(best_move[1].board, N)
     board_string = "".join(str(i) for i in board_string)
-    # yield board_to_string(board_string, N)
-    yield board_string
+    yield board_to_string(board_string, N)
+    # yield board_string
 
 
 if __name__ == "__main__":
