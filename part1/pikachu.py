@@ -31,7 +31,7 @@ def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
      then returned value is evaluation of the leaf node, max code block returns a tuple with 1st element having maximum value and 2nd element is the calling state, similarly min returns 1st element haing min state
       and its calling state
     '''
-    if recursiondepth == 2:
+    if recursiondepth == 4:
         return EvaluateState(CurrentState, player), CurrentState
     # append to visited state to reuse later, since this State subtree has been computed
     if player == 'w' and len(CurrentState.w_pieces) == 0:
