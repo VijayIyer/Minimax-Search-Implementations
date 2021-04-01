@@ -97,7 +97,6 @@ def EvaluateState(State, player):
     '''
     strength_w = 0
     strength_b = 0
-
     for w in State.w_pieces:
         strength_w += int(len(State.board) / 2) if type(w) is Pikachu else 1
     for w in State.w_pieces:
@@ -107,6 +106,12 @@ def EvaluateState(State, player):
             w.position[1] + 1] == 'w':
             strength_w += 1
         if w.position[1] > 0 and type(w) is pichu and State.board[w.position[0]][w.position[1] - 1] == 'w':
+            strength_w += 1
+        if w.position[0] == len(State.board) - 1 and type(w) is pichu:
+            strength_w += 1
+        if w.position[1] == len(State.board[0]) - 1 and type(w) is pichu:
+            strength_w += 1
+        if w.position[1] == 0 and type(w) is pichu:
             strength_w += 1
 
     for b in State.b_pieces:
@@ -118,17 +123,25 @@ def EvaluateState(State, player):
             b.position[1] - 1] == 'b':
             strength_b += 1
         if b.position[1] > 0 and type(b) is pichu and State.board[b.position[0]][b.position[1] - 1] == 'b':
-            strength_w += 1
+            strength_b += 1
+        if b.position[0] == 0 and type(b) is pichu:
+            strength_b += 1
+        if b.position[1] == len(State.board[0]) - 1 and type(b) is pichu:
+            strength_b += 1
+        if b.position[1] == 0 and type(b) is pichu:
+            strength_b += 1
 
     if player == 'b':
-        return len(State.b_pieces) - len(State.w_pieces) + 0.2 * strength_b + 0.02 * sum(
-            [abs(((len(State.board[0]) - 1) / 2) - b.position[1]) for b in State.b_pieces]) + 0.02 * sum(
-            [len(State.board) - 1 - b.position[0] for b in State.b_pieces])
+        return len(State.b_pieces) - len(State.w_pieces)  + strength_b - strength_w
+            #    + 0.01 * sum(
+            # [abs(((len(State.board[0]) - 1) / 2) - b.position[1]) for b in State.b_pieces]) + 0.01 * sum(
+            # [len(State.board) - 1 - b.position[0] for b in State.b_pieces])
 
     else:
-        return len(State.w_pieces) - len(State.b_pieces) + 0.2 * strength_w + 0.02 * sum(
-            [abs(((len(State.board[0]) - 1) / 2) - w.position[1]) for w in State.w_pieces]) + 0.02 * sum(
-            [w.position[0] for w in State.w_pieces])
+        return len(State.w_pieces) - len(State.b_pieces) + strength_w - strength_b \
+            #    + 0.01 * sum(
+            # [abs(((len(State.board[0]) - 1) / 2) - w.position[1]) for w in State.w_pieces]) + 0.01 * sum(
+            # [w.position[0] for w in State.w_pieces])
 
 
 class Move:
@@ -616,6 +629,8 @@ def find_best_move(board, N, player, timelimit):
     for next_move in current_state.GetNextMoves(player):
         move, alpha, beta = Minimax(next_move, 'Max', player, visited_states, recursiondepth, alpha, beta)
         moves.append((move, next_move))
+        best_move = move, next_move
+
     best_move = max(moves, key=lambda t:t[0])
     board_string = ConvertBoardTo1d(best_move[1].board, N)
     board_string = "".join(str(i) for i in board_string)
