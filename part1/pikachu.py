@@ -108,10 +108,10 @@ def EvaluateState(State, player):
         if b.position[0] < len(State.board) and type(b) is pichu and State.board[b.position[0]+1][b.position[1]] == 'b':
             strength_b += 1
     if player == 'b':
-        return len(State.b_pieces) - len(State.w_pieces)
+        return len(State.b_pieces) - len(State.w_pieces) + strength_b - strength_w
 
     else:
-        return len(State.w_pieces) - len(State.b_pieces)
+        return len(State.w_pieces) - len(State.b_pieces) + strength_w - strength_b
 
 
 class Move:
