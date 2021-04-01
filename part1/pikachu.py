@@ -13,7 +13,7 @@ import copy
 
 
 def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
-    if recursiondepth == 3:
+    if recursiondepth == 2:
         return EvaluateState(CurrentState, player), CurrentState
     if player == 'w' and len(CurrentState.w_pieces) == 0:
         visitedstates.append((-10*EvaluateState(CurrentState, player), CurrentState))
@@ -58,22 +58,31 @@ def Minimax(CurrentState, level, player, visitedstates, recursiondepth):
 
 
 def EvaluateState(State, player):
-    strength = 0
-    if player == 'w':
-        for w in State.w_pieces:
-            strength += len(State.board)/2 if type(w) is Pikachu else 1
-        for w in State.w_pieces:
-            if w.position[0] > 0 and type(w) is pichu and State.board[w.position[0]-1][w.position[1]] == 'w':
-                strength += 1
-        return len(State.w_pieces) - len(State.b_pieces) + strength/len(State.w_pieces) + (sum([w.position[0] for w in State.w_pieces])/len(State.w_pieces))
-    else:
-        for b in State.b_pieces:
-            strength += len(State.board)/2 if type(b) is Pikachu else 1
-        for b in State.w_pieces:
-            if b.position[0] < len(State.board) and type(b) is pichu and State.board[b.position[0]+1][b.position[1]] == 'b':
-                strength += 1
-        return len(State.b_pieces) - len(State.w_pieces) + strength/len(State.w_pieces) + (sum([len(State.board) - 1 - b.position[0] for b in State.b_pieces])/len(State.b_pieces))
+    strength_w = 0
+    strength_b = 0
 
+    for w in State.w_pieces:
+        strength_w += len(State.board)/2 if type(w) is Pikachu else 1
+    for w in State.w_pieces:
+        if w.position[0] > 0 and type(w) is pichu and State.board[w.position[0]-1][w.position[1]] == 'w':
+            strength_w += 1
+
+    for b in State.b_pieces:
+        strength_b += len(State.board)/2 if type(b) is Pikachu else 1
+    for b in State.w_pieces:
+        if b.position[0] < len(State.board) and type(b) is pichu and State.board[b.position[0]+1][b.position[1]] == 'b':
+            strength_b += 1
+    if player == 'b':
+        return len(State.b_pieces) + strength_b / len(State.b_pieces) + (
+                sum([b.position[0] for b in State.b_pieces]) / len(State.b_pieces)) \
+             - (len(State.w_pieces) + (strength_w / len(State.w_pieces))
+             + sum([w.position[0] for w in State.w_pieces]) / len(State.w_pieces))
+
+    else:
+        return len(State.w_pieces) + strength_w / len(State.w_pieces) + (
+                sum([w.position[0] for w in State.w_pieces]) / len(State.w_pieces)) \
+             - (len(State.b_pieces) + (strength_b / len(State.b_pieces))
+             + sum([b.position[0] for b in State.b_pieces]) / len(State.b_pieces))
 
 class Move:
     def __init__(self, previous, current, captures):
