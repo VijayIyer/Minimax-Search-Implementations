@@ -1,7 +1,9 @@
 # Automatic Sebastian game player
 # B551 Spring 2021
-# VIJAY IYER, vsiyer@iu.edu
-#
+# vsiyer@iu.edu
+# shmoham@iu.edu
+# spanampi@iu.edu
+
 # Based on skeleton code by D. Crandall
 #
 #
@@ -193,7 +195,7 @@ def GetAllScores(dice, scorecard):
         # current_scores.append(current_scorecard)
     return current_scorecard
 
-
+# this method is not used anymore
 def ComputeExpectation(dice, subset_size, rerolled_dice):
     predicted_rolls = itertools.combinations_with_replacement(range(1,7),subset_size)
     predicted_dice_rolls_with_replacement=[]
